@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from prophet import Prophet
 import seaborn as sns
 import numpy as np
+import statsmodels.api as sm
 
 # Título do aplicativo
 st.title('Previsão de Preços do Petróleo Brent')
@@ -128,7 +129,15 @@ plt.ylabel('Frequência')
 plt.tight_layout()
 st.pyplot(plt)
 
-# Dashboard 4: Correlação com Outros Indicadores
+# ARIMA
+st.subheader('ARIMA')
+df_pred = forecast[['ds','yhat']].set_index('ds')
+model = sm.tsa.ARIMA(df_pred, order=(1,1,1))  # Escolha dos parâmetros p, d, q
+results = model.fit()
+results.plot_diagnostics(figsize=(12, 8))
+plt.show()
+
+# Correlação com Outros Indicadores
 st.subheader('Correlação com Outros Indicadores')
 # Aqui vamos simular um DataFrame de indicadores econômicos
 np.random.seed(0)
