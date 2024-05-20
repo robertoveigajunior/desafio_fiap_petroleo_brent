@@ -73,6 +73,4 @@ plt.tight_layout()
 plt.show()
 
 
-
-
-st.write('Feito com Streamlit')
+st.write('Feito com Streamlit :)')
