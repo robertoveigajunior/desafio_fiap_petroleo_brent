@@ -4,6 +4,7 @@ import streamlit as st
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 from prophet import Prophet
 
 # Carregar dados
@@ -12,67 +13,65 @@ response = requests.get(url_ipea)
 
 df = pd.DataFrame()
 if response.status_code != 200:
-    st.error('HTTP error while downloading the module ' + url_ipea)
+    print(' HTTP error while downloading the module ' + url_ipea)
 else:
-    st.success('HTTP response from the module ' + url_ipea)
+
+    print(' HTTP response from the module ' + url_ipea)
     soup = BeautifulSoup(response.content, 'html.parser')
-    table = soup.find('table', class_='dxgv')
+    table = soup.find('table', class_='dxgvControl')
 
     if table:
-        # Obter todas as tabelas da página e verificar se a tabela desejada está presente
-        tables = pd.read_html(str(table))
-        if len(tables) > 1:
-            df = tables[1]
-            df = df.rename(columns={df.columns[0]: 'ds', df.columns[1]: 'y'}).drop(0, axis=0).reset_index(drop=True)
-            df['y'] = df['y'].astype('float64')
-        else:
-            st.error("Tabela não encontrada na página.")
+        df = pd.read_html(str(table))[1]
+        df = df.rename(mapper = df.iloc[0], axis=1).drop(0, axis=0).reset_index(drop=True)
+        df.rename(columns={df.columns[0]: 'ds', df.columns[1]: 'y'}, inplace=True)
+        df.y = df.y.astype('int64')
+
     else:
-        st.error("Nenhuma tabela encontrada na página.")
+        print("Not table loaded")
 
-# Verificar se o DataFrame está vazio
-if df.empty:
-    st.error("Nenhum dado disponível.")
-else:
-    df.head()
-    df['ds'] = pd.to_datetime(df['ds'], format='%d/%m/%Y')
-    df['y'] = df['y'].astype('float64').apply(lambda x: x / 100)
+df.head()      
+df.ds.unique()
+df.isna().any()
+df.duplicated().any()
+df.iloc[:, 1].describe()
+df.y = df.y.astype('float64').apply(lambda x: x/100)
 
-    # Treinar o modelo Prophet
-    model = Prophet()
-    model.fit(df)
+# Treinar o modelo Prophet
+model = Prophet()
+model.fit(df)
 
-    # Prever dados futuros
-    future = model.make_future_dataframe(periods=365)
-    forecast = model.predict(future)
-    forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+# Prever dados futuros
+future = model.make_future_dataframe(periods=365)
+forecast = model.predict(future)
+forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+model.plot(forecast)
 
-    # Criar interface no Streamlit
-    st.title('Previsão do Preço do Petróleo Brent')
-    st.write('Modelo de Previsão usando Prophet')
+# Criar interface no Streamlit
+st.title('Previsão do Preço do Petróleo Brent')
+st.write('Modelo de Previsão usando Prophet')
 
-    # Mostrar dados reais
-    st.subheader('Dados Reais')
-    st.line_chart(df[['ds', 'y']].set_index('ds'))
+# Mostrar dados reais
+st.subheader('Dados Reais')
+st.line_chart(df[['ds', 'y']].set_index('ds'))
 
-    # Mostrar previsão do modelo
-    st.subheader('Previsão do Modelo')
-    st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
+# Mostrar previsão do modelo
+st.subheader('Previsão do Modelo')
+st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
-    df_predict = pd.concat([future, forecast['yhat']], axis=1)
-    
-    # Criar gráfico com matplotlib e seaborn
-    plt.figure(figsize=(12, 6))
-    sns.set_style('whitegrid')
-    sns.lineplot(data=df, x='ds', y='y', label='real')
-    sns.lineplot(data=df_predict, x='ds', y='yhat', label='modelo')
-    plt.title('Preço do Petróleo Brent (1987 - Presente)')
-    plt.xlabel('Data')
-    plt.ylabel('Preço de Fechamento (USD)')
-    plt.xticks(rotation=45)
-    plt.tight_layout()
 
-    # Exibir gráfico no Streamlit
-    st.pyplot(plt)
+df_predict = pd.concat([future, forecast.yhat], axis=1)
+df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
+plt.figure(figsize=(12, 6))
+sns.set_style('whitegrid')
+sns.lineplot(data=df, x='ds', y='y', label='real')
+sns.lineplot(data=df_predict, x='ds', y='yhat', label='modelo')
+plt.title('Preço do Petróleo Brent (1987 - Presente)')
+plt.xlabel('Data')
+plt.ylabel('Preço de Fechamento (USD)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+# plt.show()
+plt.plot()
 
-    st.write('Feito com Streamlit :)')
+
+st.write('Feito com Streamlit :)')
