@@ -58,7 +58,7 @@ st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
 st.write('Feito com Streamlit')
-
+df_apredict = pd.concat([future, forecast.yhat], axis=1)
 df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
 
 plt.figure(figsize=(12, 6))
