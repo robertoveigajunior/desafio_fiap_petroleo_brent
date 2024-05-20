@@ -47,8 +47,6 @@ forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
 
 # Função para filtrar dados por período
 def filter_data(df, start_date, end_date):
-    start_date = pd.to_datetime(start_date)  # Conversão para datetime64[ns]
-    end_date = pd.to_datetime(end_date)  # Conversão para datetime64[ns]
     mask = (df['ds'] >= start_date) & (df['ds'] <= end_date)
     return df.loc[mask]
 
