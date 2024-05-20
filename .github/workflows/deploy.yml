@@ -1,4 +1,4 @@
-name: Deploy Streamlit to GitHub Pages
+name: Deploy to Heroku
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,9 +21,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install streamlit pandas prophet
+        pip install -r requirements.txt
 
-    - name: Run Streamlit
+    - name: Deploy to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-        streamlit run app.py --server.port 8501
-
+        heroku git:remote -a nome-do-seu-app
+        git push heroku main
