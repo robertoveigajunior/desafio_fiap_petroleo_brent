@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -52,9 +50,6 @@ model.plot(forecast)
 forecast.yhat
 
 df_predict = pd.concat([future, forecast.yhat], axis=1)
-
-df
-
 df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
 
 plt.figure(figsize=(12, 6))
@@ -68,4 +63,5 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-df.between_time
+
+st.write('Feito com Streamlit :)')
