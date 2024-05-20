@@ -54,7 +54,7 @@ st.subheader('Dados Reais')
 st.line_chart(df[['ds', 'y']].set_index('ds'))
 
 # Mostrar previsão do modelo
-st.subheader('Previsão')
+st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
 st.write('Feito com Streamlit')
