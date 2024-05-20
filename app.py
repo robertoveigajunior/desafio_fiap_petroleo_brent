@@ -39,6 +39,7 @@ df.y = df.y.astype('float64').apply(lambda x: x/100)
 # Treinar o modelo Prophet
 model = Prophet()
 model.fit(df)
+scaler = joblib.load('scaler.pkl')
 
 # Prever dados futuros
 future = model.make_future_dataframe(periods=365)
