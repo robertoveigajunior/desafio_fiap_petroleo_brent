@@ -44,6 +44,7 @@ model.fit(df)
 future = model.make_future_dataframe(periods=365)
 forecast = model.predict(future)
 forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+model.plot(forecast)
 
 # Criar interface no Streamlit
 st.title('Previsão do Preço do Petróleo Brent')
@@ -57,7 +58,7 @@ st.line_chart(df[['ds', 'y']].set_index('ds'))
 st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
-st.write('Feito com Streamlit')
+
 df_predict = pd.concat([future, forecast.yhat], axis=1)
 df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
 plt.figure(figsize=(12, 6))
@@ -71,4 +72,7 @@ plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
 
-model.plot(forecast)
+
+
+
+st.write('Feito com Streamlit')
