@@ -27,5 +27,5 @@ jobs:
       env:
         HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
-        heroku git:remote -a nome-do-seu-app
+        heroku git:remote -a app-petroleo-brent
         git push heroku main
