@@ -25,7 +25,7 @@ jobs:
 
     - name: Deploy to Heroku
       env:
-        HEROKU_API_KEY: HRKU-5cb08a60-8d9f-433c-9b69-fecf04ae35e7
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
       run: |
         heroku git:remote -a app-petroleo-brent
         git push heroku main
