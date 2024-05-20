@@ -3,3 +3,4 @@ pandas
 prophet
 beautifulsoup4
 seaborn
+lxml
