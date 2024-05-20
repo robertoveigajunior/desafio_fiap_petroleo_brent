@@ -63,15 +63,9 @@ Este projeto está configurado para deploy automatizado no Heroku usando GitHub 
 
 ### Configuração do Heroku
 
-1. Crie um aplicativo no Heroku:
+1. Aplicativo no Heroku:
 
-    ```sh
-    heroku create nome-do-seu-app
-    ```
-
-2. Obtenha a API Key do Heroku em `Account Settings` e adicione ao GitHub como um segredo:
-    - `HEROKU_API_KEY`: A chave da API do Heroku.
-    - `HEROKU_EMAIL`: Seu e-mail de login no Heroku.
+    https://app-petroleo-brent-4b13f8521f0d.herokuapp.com/
 
 ### Configuração do GitHub Actions
 
