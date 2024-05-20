@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Check out the repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 0  # Clona o repositório completo
 
     - name: Set up Python
       uses: actions/setup-python@v2
