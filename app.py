@@ -70,3 +70,5 @@ plt.ylabel('Preço de Fechamento (USD)')
 plt.xticks(rotation=45)
 plt.tight_layout()
 plt.show()
+
+model.plot(forecast)
