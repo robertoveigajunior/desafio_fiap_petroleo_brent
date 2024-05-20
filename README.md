@@ -54,3 +54,63 @@ Para rodar a aplicação localmente, execute:
 
 ```sh
 streamlit run app.py
+Acesse a aplicação no seu navegador em [http://localhost:8501](http://localhost:8501).
+```
+
+## Deploy no Heroku
+
+Este projeto está configurado para deploy automatizado no Heroku usando GitHub Actions.
+
+### Configuração do Heroku
+
+1. Crie um aplicativo no Heroku:
+
+    ```sh
+    heroku create nome-do-seu-app
+    ```
+
+2. Obtenha a API Key do Heroku em `Account Settings` e adicione ao GitHub como um segredo:
+    - `HEROKU_API_KEY`: A chave da API do Heroku.
+    - `HEROKU_EMAIL`: Seu e-mail de login no Heroku.
+
+### Configuração do GitHub Actions
+
+O workflow do GitHub Actions (`.github/workflows/deploy.yml`) está configurado para:
+
+- Instalar dependências
+- Fazer login no Heroku
+- Deploy automático no Heroku
+
+### Executando o Deploy
+
+Com o GitHub Actions configurado, qualquer push para a branch `main` disparará o workflow de deploy.
+
+## Estrutura do Projeto
+
+- `app.py`: Script principal da aplicação Streamlit.
+- `requirements.txt`: Dependências do projeto.
+- `Procfile`: Configuração para o Heroku.
+- `.github/workflows/deploy.yml`: Workflow de deploy automatizado do GitHub Actions.
+
+## Storytelling do Projeto
+
+### Início
+
+O projeto começou com a necessidade de prever os preços do petróleo Brent para ajudar na tomada de decisões estratégicas. Utilizamos dados históricos do preço do petróleo para treinar um modelo de previsão usando a biblioteca Prophet.
+
+### Desenvolvimento
+
+Criamos uma aplicação interativa usando Streamlit para visualizar os dados históricos e as previsões futuras. A aplicação permite aos usuários ver como os preços do petróleo variaram ao longo do tempo e obter previsões para o futuro.
+
+### Deploy
+
+Optamos por hospedar a aplicação no Heroku para facilitar o acesso e a escalabilidade. Configuramos GitHub Actions para automação do deploy, garantindo que as atualizações sejam refletidas automaticamente na aplicação hospedada.
+
+### Desafios
+
+Enfrentamos alguns desafios durante o deploy, como a instalação de dependências específicas (`beautifulsoup4`, `seaborn`, `lxml`). Resolvemos esses problemas adicionando as dependências necessárias ao arquivo `requirements.txt`.
+
+### Conclusão
+
+O resultado é uma ferramenta poderosa e acessível para prever os preços do petróleo Brent, hospedada no Heroku e pronta para ser utilizada por qualquer pessoa interessada em análises de mercado.
+
