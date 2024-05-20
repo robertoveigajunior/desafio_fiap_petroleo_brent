@@ -79,11 +79,7 @@ st.subheader('Componentes das Previsões')
 fig4 = model.plot_components(forecast)
 st.pyplot(fig4)
 
-# Criar interface no Streamlit
-st.title('Previsão do Preço do Petróleo Brent')
-st.write('Modelo de Previsão usando Prophet')
-
-# Mostrar dados reais
+# Dados reais
 st.subheader('Dados Reais')
 st.line_chart(df[['ds', 'y']].set_index('ds'))
 
@@ -135,7 +131,7 @@ df_pred = forecast[['ds','yhat']].set_index('ds')
 model = sm.tsa.ARIMA(df_pred, order=(1,1,1))  # Escolha dos parâmetros p, d, q
 results = model.fit()
 results.plot_diagnostics(figsize=(12, 8))
-plt.show()
+st.pyplot(plt)
 
 # Correlação com Outros Indicadores
 st.subheader('Correlação com Outros Indicadores')
