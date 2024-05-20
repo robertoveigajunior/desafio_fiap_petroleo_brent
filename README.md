@@ -54,7 +54,7 @@ Para rodar a aplicação localmente, execute:
 
 ```sh
 streamlit run app.py
-Acesse a aplicação no seu navegador em [http://localhost:8501](http://localhost:8501).
+Acesse a aplicação no seu navegador em http://localhost:8501
 ```
 
 ## Deploy no Heroku
