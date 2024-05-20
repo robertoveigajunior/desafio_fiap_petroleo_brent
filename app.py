@@ -106,10 +106,11 @@ st.subheader('Dashboard 4: Correlação com Outros Indicadores')
 # other_indicators = pd.read_csv('path_to_other_indicators.csv')  # Carregar outros indicadores
 # Aqui vamos simular um DataFrame de indicadores econômicos
 np.random.seed(0)
+periods = min(len(df), 400)  # Ajustar para um limite razoável
 other_indicators = pd.DataFrame({
-    'ds': pd.date_range(start=df['ds'].min(), periods=len(df), freq='M'),
-    'indicator_1': np.random.randn(len(df)),
-    'indicator_2': np.random.randn(len(df))
+    'ds': pd.date_range(start=df['ds'].min(), periods=periods, freq='M'),
+    'indicator_1': np.random.randn(periods),
+    'indicator_2': np.random.randn(periods)
 })
 other_indicators.set_index('ds', inplace=True)
 combined_data = df.set_index('ds').join(other_indicators)
