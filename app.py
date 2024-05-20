@@ -58,9 +58,9 @@ st.line_chart(df[['ds', 'y']].set_index('ds'))
 st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
-
 df_predict = pd.concat([future, forecast.yhat], axis=1)
 df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
+
 plt.figure(figsize=(12, 6))
 sns.set_style('whitegrid')
 sns.lineplot(data=df, x='ds', y='y', label='real')
@@ -70,8 +70,6 @@ plt.xlabel('Data')
 plt.ylabel('Preço de Fechamento (USD)')
 plt.xticks(rotation=45)
 plt.tight_layout()
-# plt.show()
-plt.plot()
-
+plt.show()
 
 st.write('Feito com Streamlit :)')
