@@ -31,8 +31,8 @@ Certifique-se de ter o seguinte instalado:
 1. Clone o repositório:
 
     ```sh
-    git clone https://github.com/SEU_USUARIO/SEU_REPOSITORIO.git
-    cd SEU_REPOSITORIO
+    git clone https://github.com/robertoveigajunior/desafio_fiap_petroleo_brent.git
+    cd desafio_fiap_petroleo_brent
     ```
 
 2. Crie e ative um ambiente virtual:
