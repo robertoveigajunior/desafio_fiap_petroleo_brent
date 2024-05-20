@@ -58,3 +58,16 @@ st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
 st.write('Feito com Streamlit')
+
+df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
+
+plt.figure(figsize=(12, 6))
+sns.set_style('whitegrid')
+sns.lineplot(data=df, x='ds', y='y', label='real')
+sns.lineplot(data=df_predict, x='ds', y='yhat', label='modelo')
+plt.title('Preço do Petróleo Brent (1987 - Presente)')
+plt.xlabel('Data')
+plt.ylabel('Preço de Fechamento (USD)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
