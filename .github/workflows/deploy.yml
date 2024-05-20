@@ -33,5 +33,5 @@ jobs:
 
     - name: Deploy to Heroku
       run: |
-        heroku git:remote -a nome-do-seu-app
+        heroku git:remote -a app-petroleo-brent
         git push heroku main
