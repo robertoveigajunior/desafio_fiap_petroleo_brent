@@ -21,7 +21,7 @@ else:
     table = soup.find('table', class_='dxgvControl')
 
     if table:
-        df = pd.read_html(str(table))[1]  # Se houver mais de uma tabela, ajuste o índice
+        df = pd.read_html(str(table))[1]
         df = df.rename(mapper = df.iloc[0], axis=1).drop(0, axis=0).reset_index(drop=True)
         df.rename(columns={df.columns[0]: 'ds', df.columns[1]: 'y'}, inplace=True)
         df.y = df.y.astype('int64')
