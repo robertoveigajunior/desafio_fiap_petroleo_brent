@@ -15,7 +15,7 @@ Este projeto visa fornecer uma ferramenta interativa para visualizar os preços 
 """)
 
 # Função para carregar os dados
-@st.cache
+@st.cache_data
 def load_data():
     url_ipea = 'http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'
     response = requests.get(url_ipea)
