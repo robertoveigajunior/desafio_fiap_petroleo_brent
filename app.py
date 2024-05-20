@@ -39,7 +39,6 @@ df.y = df.y.astype('float64').apply(lambda x: x/100)
 # Treinar o modelo Prophet
 model = Prophet()
 model.fit(df)
-scaler = joblib.load('scaler.pkl')
 
 # Prever dados futuros
 future = model.make_future_dataframe(periods=365)
@@ -57,14 +56,5 @@ st.line_chart(df[['ds', 'y']].set_index('ds'))
 # Mostrar previsão do modelo
 st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
-
-st.title('Previsão do Preço do Petróleo Brent')
-date = st.date_input('Selecione a Data')
-
-if st.button('Prever'):
-    data_input = scaler.transform(data_input)
-    prediction = model.predict(data_input)
-    prediction = scaler.inverse_transform(prediction)
-    st.write(f'Preço Previsto: {prediction[0][0]} USD')
 
 st.write('Feito com Streamlit')
