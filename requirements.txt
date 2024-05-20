@@ -4,3 +4,4 @@ prophet
 beautifulsoup4
 seaborn
 lxml
+statsmodels
