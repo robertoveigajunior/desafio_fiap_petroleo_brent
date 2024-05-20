@@ -1,67 +1,79 @@
 import pandas as pd
 import requests
+import streamlit as st
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from prophet import Prophet
 
+# Carregar dados
 url_ipea = 'http://www.ipeadata.gov.br/ExibeSerie.aspx?module=m&serid=1650971490&oper=view'
 response = requests.get(url_ipea)
 
 df = pd.DataFrame()
 if response.status_code != 200:
-    print(' HTTP error while downloading the module ' + url_ipea)
+    st.error('HTTP error while downloading the module ' + url_ipea)
 else:
-
-    print(' HTTP response from the module ' + url_ipea)
+    st.success('HTTP response from the module ' + url_ipea)
     soup = BeautifulSoup(response.content, 'html.parser')
     table = soup.find('table', class_='dxgvControl')
 
     if table:
-        df = pd.read_html(str(table))[1]  # Se houver mais de uma tabela, ajuste o índice
+        df = pd.read_html(str(table))[1]
         df = df.rename(mapper = df.iloc[0], axis=1).drop(0, axis=0).reset_index(drop=True)
         df.rename(columns={df.columns[0]: 'ds', df.columns[1]: 'y'}, inplace=True)
         df.y = df.y.astype('int64')
-
     else:
-        print("Not table loaded")
+        st.error("No table loaded")
 
-df.head()
+# Verificar se o DataFrame está vazio
+if df.empty:
+    st.error("No data available.")
+else:
+    df.head()      
+    df.ds.unique()
+    df.isna().any()
+    df.duplicated().any()
+    df.iloc[:, 1].describe()
+    df.y = df.y.astype('float64').apply(lambda x: x/100)
 
-df.ds.unique()
+    # Treinar o modelo Prophet
+    model = Prophet()
+    model.fit(df)
 
-df.isna().any()
+    # Prever dados futuros
+    future = model.make_future_dataframe(periods=365)
+    forecast = model.predict(future)
+    forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
 
-df.duplicated().any()
+    # Criar interface no Streamlit
+    st.title('Previsão do Preço do Petróleo Brent')
+    st.write('Modelo de Previsão usando Prophet')
 
-df.iloc[:, 1].describe()
+    # Mostrar dados reais
+    st.subheader('Dados Reais')
+    st.line_chart(df[['ds', 'y']].set_index('ds'))
 
-df.y = df.y.astype('float64').apply(lambda x: x/100)
+    # Mostrar previsão do modelo
+    st.subheader('Previsão do Modelo')
+    st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
-model = Prophet()
-model.fit(df)
-future = model.make_future_dataframe(periods=365)
-forecast = model.predict(future)
-forecast = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+    df_predict = pd.concat([future, forecast.yhat], axis=1)
+    df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
 
-model.plot(forecast)
+    # Criar gráfico com matplotlib e seaborn
+    plt.figure(figsize=(12, 6))
+    sns.set_style('whitegrid')
+    sns.lineplot(data=df, x='ds', y='y', label='real')
+    sns.lineplot(data=df_predict, x='ds', y='yhat', label='modelo')
+    plt.title('Preço do Petróleo Brent (1987 - Presente)')
+    plt.xlabel('Data')
+    plt.ylabel('Preço de Fechamento (USD)')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
 
-forecast.yhat
+    # Exibir gráfico no Streamlit
+    st.pyplot(plt)
 
-df_predict = pd.concat([future, forecast.yhat], axis=1)
-df.ds = pd.to_datetime(df.ds, format='%d/%m/%Y')
-
-plt.figure(figsize=(12, 6))
-sns.set_style('whitegrid')
-sns.lineplot(data=df, x='ds', y='y', label='real')
-sns.lineplot(data=df_predict, x='ds', y='yhat', label='modelo')
-plt.title('Preço do Petróleo Brent (1987 - Presente)')
-plt.xlabel('Data')
-plt.ylabel('Preço de Fechamento (USD)')
-plt.xticks(rotation=45)
-plt.tight_layout()
-plt.show()
-
-
-st.write('Feito com Streamlit :)')
+    st.write('Feito com Streamlit :)')
