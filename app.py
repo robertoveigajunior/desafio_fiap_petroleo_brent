@@ -17,20 +17,6 @@ A previsão precisa dos preços do petróleo é essencial para a tomada de decis
 Este projeto visa fornecer uma ferramenta interativa para visualizar os preços históricos do petróleo Brent e prever preços futuros.
 """)
 
-# Função para filtrar dados por período
-def filter_data(df, start_date, end_date):
-    start_date = pd.to_datetime(start_date)  # Conversão para datetime64[ns]
-    end_date = pd.to_datetime(end_date)  # Conversão para datetime64[ns]
-    mask = (df['ds'] >= start_date) & (df['ds'] <= end_date)
-    return df.loc[mask]
-
-# Para interação
-start_date = st.date_input('Data de Início', df['ds'].min())
-end_date = st.date_input('Data de Fim', df['ds'].max())
-if st.button('Recarregar'):
-    st.experimental_rerun()
-filtered_data = filter_data(df, start_date, end_date)
-
 # Função para carregar os dados
 @st.cache_data
 def load_data():
@@ -50,6 +36,20 @@ def load_data():
 
 # Carregar dados
 df = load_data()
+
+# Função para filtrar dados por período
+def filter_data(df, start_date, end_date):
+    start_date = pd.to_datetime(start_date)  # Conversão para datetime64[ns]
+    end_date = pd.to_datetime(end_date)  # Conversão para datetime64[ns]
+    mask = (df['ds'] >= start_date) & (df['ds'] <= end_date)
+    return df.loc[mask]
+
+# Para interação
+start_date = st.date_input('Data de Início', df['ds'].min())
+end_date = st.date_input('Data de Fim', df['ds'].max())
+if st.button('Recarregar'):
+    st.experimental_rerun()
+filtered_data = filter_data(df, start_date, end_date)
 
 # Visualização dos dados
 st.subheader('Visualização dos Dados Históricos')
