@@ -7,6 +7,7 @@ from prophet import Prophet
 import seaborn as sns
 import numpy as np
 import statsmodels.api as sm
+from statsmodels.tsa.seasonal import seasonal_decompose
 
 # Título do aplicativo
 st.title('Previsão de Preços do Petróleo Brent')
@@ -126,4 +127,12 @@ df_pred = forecast[['ds','yhat']].set_index('ds')
 model = sm.tsa.ARIMA(df_pred, order=(1,1,1))  # Escolha dos parâmetros p, d, q
 results = model.fit()
 results.plot_diagnostics(figsize=(12, 8))
+st.pyplot(plt)
+
+
+# Decompor a série temporal
+result = seasonal_decompose(df['y'], model='multiplicative', period=365)  # Ajuste o período conforme necessário
+
+# Plotar decomposição
+result.plot()
 st.pyplot(plt)
