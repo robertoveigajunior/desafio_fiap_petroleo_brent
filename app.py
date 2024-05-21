@@ -131,8 +131,40 @@ st.pyplot(plt)
 
 
 # Decompor a série temporal
+st.subheader('Decompose (Tendência, sazonalidade e ruído)')
 result = seasonal_decompose(df['y'], model='multiplicative', period=365)  # Ajuste o período conforme necessário
 
 # Plotar decomposição
 result.plot()
 st.pyplot(plt)
+
+
+periodo = (df.ds.dt.year >= start_date.year) & (df.ds.dt.year <= end_date.year)
+# df.set_index(df.ds.dt.year)[['y', 'ds']].groupby(['ds']).max().to_frame()
+df['year'] = df.ds.dt.year
+
+max_price_per_year = df.groupby('year')[['ds', 'y']].max()
+min_price_per_year = df.groupby('year')[['ds', 'y']].min()
+mean_price_per_year = df.groupby('year')[['ds', 'y']].mean()
+
+df_max = pd.DataFrame()
+df_min = pd.DataFrame()
+for y in df.year.unique():
+    aux = df.iloc[[df.query(f'year == {y}').y.idxmax()]]
+    df_max = pd.concat([aux, df_max], axis=0)
+    
+    aux = df.iloc[[df.query(f'year == {y}').y.idxmin()]]
+    df_min = pd.concat([aux, df_min], axis=0)
+
+st.subheader('Preços máximos e minimos')
+plt.figure(figsize=(12, 6))
+sns.set_style('whitegrid')
+sns.lineplot(data=df, x='ds', y='y', label='Variação do preço', color='lightblue')
+sns.lineplot(data=df_max, x='ds', y='y', label='Preço máximo (por ano)', color='black', linestyle='--')
+sns.lineplot(data=df_min, x='ds', y='y', label='Preço mínimo (por ano)', color='darkblue', linestyle='--')
+plt.title('Preço do Petróleo Brent (1987 - Presente)')
+plt.xlabel('Data')
+plt.ylabel('Preço de Fechamento (USD)')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
