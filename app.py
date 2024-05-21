@@ -24,6 +24,13 @@ def filter_data(df, start_date, end_date):
     mask = (df['ds'] >= start_date) & (df['ds'] <= end_date)
     return df.loc[mask]
 
+# Para interação
+start_date = st.date_input('Data de Início', df['ds'].min())
+end_date = st.date_input('Data de Fim', df['ds'].max())
+if st.button('Recarregar'):
+    st.experimental_rerun()
+filtered_data = filter_data(df, start_date, end_date)
+
 # Função para carregar os dados
 @st.cache_data
 def load_data():
@@ -44,10 +51,6 @@ def load_data():
 # Carregar dados
 df = load_data()
 
-# Mostrar os dados carregados
-st.subheader('Dados Históricos')
-st.write(df.head())
-
 # Visualização dos dados
 st.subheader('Visualização dos Dados Históricos')
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -62,17 +65,14 @@ st.pyplot(fig)
 model = Prophet()
 model.fit(df)
 
-# Fazer previsões futuras
+# Fazer previsões futuras pelo modelo
 future = model.make_future_dataframe(periods=365)
 forecast = model.predict(future)
-forecast2 = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
 
 # Visualização das previsões
-st.subheader('Previsões Futuras')
+st.subheader('Previsões Futuras fornecidas pelo modelo Prophet')
 fig2 = model.plot(forecast)
-fig3 = model.plot(forecast2)
 st.pyplot(fig2)
-st.pyplot(fig3)
 
 # Visualização dos componentes das previsões
 st.subheader('Componentes das Previsões')
@@ -88,7 +88,7 @@ st.subheader('Previsão do Modelo')
 st.line_chart(forecast[['ds', 'yhat']].set_index('ds'))
 
 # Visualização principal com matplotlib e seaborn
-st.subheader('Visualização Completa')
+st.subheader('Visualização Completa com Matplotlib e Seaborn')
 plt.figure(figsize=(12, 6))
 sns.set_style('whitegrid')
 sns.lineplot(data=df, x='ds', y='y', label='Real')
@@ -102,11 +102,6 @@ st.pyplot(plt)
 
 # Análise de Tendências
 st.subheader('Análise de Tendências')
-start_date = st.date_input('Data de Início', df['ds'].min())
-end_date = st.date_input('Data de Fim', df['ds'].max())
-if st.button('Recarregar'):
-    st.experimental_rerun()
-filtered_data = filter_data(df, start_date, end_date)
 st.line_chart(filtered_data[['ds', 'y']].set_index('ds'))
 
 # Análise de Sazonalidade
@@ -114,7 +109,7 @@ st.subheader('Análise de Sazonalidade')
 monthly_data = df.resample('M', on='ds').mean()
 st.line_chart(monthly_data['y'])
 
-# Dashboard 3: Distribuição de Preços
+# Distribuição de Preços
 st.subheader('Distribuição de Preços')
 filtered_data = filter_data(df, start_date, end_date)
 plt.figure(figsize=(12, 6))
@@ -131,25 +126,4 @@ df_pred = forecast[['ds','yhat']].set_index('ds')
 model = sm.tsa.ARIMA(df_pred, order=(1,1,1))  # Escolha dos parâmetros p, d, q
 results = model.fit()
 results.plot_diagnostics(figsize=(12, 8))
-st.pyplot(plt)
-
-# Correlação com Outros Indicadores
-st.subheader('Correlação com Outros Indicadores')
-# Aqui vamos simular um DataFrame de indicadores econômicos
-np.random.seed(0)
-periods = min(len(df), 400)  # Ajustar para um limite razoável
-other_indicators = pd.DataFrame({
-    'ds': pd.date_range(start=df['ds'].min(), periods=periods, freq='M'),
-    'indicator_1': np.random.randn(periods),
-    'indicator_2': np.random.randn(periods)
-})
-other_indicators.set_index('ds', inplace=True)
-combined_data = df.set_index('ds').join(other_indicators)
-correlation_matrix = combined_data.corr()
-
-st.write('Matriz de Correlação')
-st.dataframe(correlation_matrix)
-plt.figure(figsize=(10, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
-plt.title('Matriz de Correlação entre Preço do Petróleo e Outros Indicadores')
 st.pyplot(plt)
