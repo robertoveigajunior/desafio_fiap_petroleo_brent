@@ -108,7 +108,7 @@ st.line_chart(filtered_data[['ds', 'y']].set_index('ds'))
 # Análise de Sazonalidade
 st.subheader('Análise de Sazonalidade')
 monthly_data = df.resample('M', on='ds').mean()
-st.line_chart(monthly_data['y'])
+st.line_chart(filtered_data[['ds', 'y']].set_index('ds'))
 
 # Distribuição de Preços
 st.subheader('Distribuição de Preços')
